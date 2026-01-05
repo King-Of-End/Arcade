@@ -20,7 +20,8 @@ class Game(arcade.Window):
             self.center_y,
             PLAYER_SPEED,
             self.bullet_list,
-            self.mouse_placement
+            self.mouse_placement,
+            player_model=0 # это значение мы получим из окна выбора персонажа
         )
         self.player_list: arcade.SpriteList = arcade.SpriteList()
         self.player_list.append(self.player)
@@ -47,7 +48,7 @@ class Game(arcade.Window):
         """Обновлеям все спрайты, врагам передаём позицию игрока"""
         self.player_list.update(delta_time)
         self.bullet_list.update(delta_time)
-        self.enemies_list.update(delta_time, player_coords=self.get_player_coords())
+        self.enemies_list.update(delta_time, self.get_player_coords())
 
         contacting_player = arcade.check_for_collision_with_list(self.player, self.enemies_list)
         for enemy in contacting_player:
@@ -63,7 +64,7 @@ class Game(arcade.Window):
 
 
     def get_player_coords(self):
-        return self.player.center_x, self.player.center_y
+        return (self.player.center_x, self.player.center_y)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.D:
