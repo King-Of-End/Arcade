@@ -46,13 +46,28 @@ class Slug(arcade.Sprite):
 
         self.trail_emitter = make_trail(self, maintain=40)
 
-    def update(self, delta_time: float = 1 / 60, *args, **kwargs):
+    def update(self, delta_time: float = 1 / 60, player_coords=None):
+        if player_coords is None:
+            player_x, player_y = 700, 700  # дефолтные координаты
+        else:
+            player_x, player_y = player_coords
         self.animation_timer += delta_time
         if self.animation_timer >= ANIMATION_SPEED:
             self.animation_timer = 0
             self.animation_frame = (self.animation_frame + 1) % len(self.textures)
-            self.change_x = random.randint(-5, 5)
-            self.change_y = random.randint(-5, 5)
+            if self.center_x < player_x - 3:
+                self.change_x = random.randint(1, 3)
+            elif self.center_x > player_x + 3:
+                self.change_x = random.randint(-3, -1)
+            else:
+                self.change_x = 0
+
+            if self.center_y < player_y - 3:
+                self.change_y = random.randint(1, 3)
+            elif self.center_y > player_y + 3:
+                self.change_y = random.randint(-3, -1)
+            else:
+                self.change_y = 0
         self.texture = self.textures[self.animation_frame]
 
         super().update(delta_time)
@@ -60,12 +75,18 @@ class Slug(arcade.Sprite):
         self.trail_emitter.center_x = self.center_x
         self.trail_emitter.center_y = self.center_y - 35
         # self.center_x = random.randint(50, 150) - этой строчкой можно посмотреть что след реально остается за ними
+        if player_x > self.center_x:
+            self.scale_x = -0.6
+        else:
+            self.scale_x = 0.6
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.slug_list = arcade.SpriteList()
         self.emitters = []
+        self.player_x = 700
+        self.player_y = 700
 
     def setup(self):
         slug1 = Slug(100, 100)
@@ -86,16 +107,17 @@ class MyGame(arcade.Window):
         self.slug_list.draw()
 
     def on_update(self, delta_time):
-        lst_coords = self.get_coords()
-        player_x, player_y = lst_coords[0], lst_coords[1]  # позиция «игрока» для определения направления
+        player_coords = (self.player_x, self.player_y)
 
         for slug in self.slug_list:
-            slug.update(delta_time, player_x)
+            slug.update(delta_time, player_coords)
 
+        # Обновляем позиции излучателей следов
         for slug in self.slug_list:
             slug.trail_emitter.center_x = slug.center_x
             slug.trail_emitter.center_y = slug.center_y - 35
 
+        # Обновляем излучатели
         emitters_copy = self.emitters.copy()
         for emitter in emitters_copy:
             emitter.update(delta_time)
@@ -103,25 +125,15 @@ class MyGame(arcade.Window):
                 self.emitters.remove(emitter)
 
     def on_key_press(self, key, modifiers):
-        # этот кусочек кода позволяет
-        # управлять одним из слаймов
-        # и смотреть за его состоянием
-
-        if len(self.slug_list) > 0:
-            slug = self.slug_list[0]
-            if key == arcade.key.LEFT:
-                slug.center_x -= 5
-            elif key == arcade.key.RIGHT:
-                slug.center_x += 5
-            elif key == arcade.key.UP:
-                slug.center_y += 5
-            elif key == arcade.key.DOWN:
-                slug.center_y -= 5
-
-    def get_coords(self):
-        return [200, 200]
-        pass
-        # тут надо реализовать в основном коде получение координат игрока
+        # Управление игроком (не червяком!)
+        if key == arcade.key.LEFT:
+            self.player_x -= 40
+        elif key == arcade.key.RIGHT:
+            self.player_x += 40
+        elif key == arcade.key.UP:
+            self.player_y += 40
+        elif key == arcade.key.DOWN:
+            self.player_y -= 40
 
 
 def main():
