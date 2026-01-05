@@ -65,16 +65,16 @@ class Slug(arcade.Sprite):
         else:
             self.scale_x = 0.6
 
-        if self.center_x < player_x:
+        if self.center_x < player_x - 3:
             self.change_x = 1
-        elif self.center_x > player_x:
+        elif self.center_x > player_x + 3:
             self.change_x = -1
         else:
             self.change_x = 0
 
-        if self.center_y < player_y:
+        if self.center_y < player_y - 3:
             self.change_y = 1
-        elif self.center_y > player_y:
+        elif self.center_y > player_y + 3:
             self.change_y = -1
         else:
             self.change_y = 0
