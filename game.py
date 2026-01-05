@@ -43,15 +43,15 @@ class Game(arcade.Window):
         self.enemies_list.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
+        """Обновлеям все спрайты, врагам передаём позицию игрока"""
         self.player_list.update(delta_time)
         self.bullet_list.update(delta_time)
         self.enemies_list.update(delta_time, player_coords=self.get_player_coords())
 
-        # emitters_copy = self.emitters.copy()
-        # for emitter in emitters_copy:
-        #     emitter.update(delta_time)
-        #     if emitter.can_reap():
-        #         self.emitters.remove(emitter)
+        for enemy in self.enemies_list:
+            touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
+            if touching_bulet:
+                enemy.remove_from_sprite_lists()
 
     def get_player_coords(self):
         return self.player.center_x, self.player.center_y
