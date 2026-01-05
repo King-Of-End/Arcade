@@ -11,7 +11,6 @@ SPARK_TEX = [
     arcade.make_soft_circle_texture(8, arcade.color.ELECTRIC_CRIMSON),
 ]
 
-
 def make_trail(attached_sprite, maintain=40):
     emit = Emitter(
         center_xy=(attached_sprite.center_x, attached_sprite.center_y),
@@ -28,12 +27,10 @@ def make_trail(attached_sprite, maintain=40):
     emit._attached = attached_sprite
     return emit
 
-
 class Slug(arcade.Sprite):
     def __init__(self, x, y):
-        super().__init__(center_x=x, center_y=y, scale=0.6)
+        super().__init__()
 
-        # сюда можно запихнуть наши текстуры
         self.textures = []
         texture = arcade.load_texture("images/green_worm1.png")
         self.textures.append(texture)
@@ -41,46 +38,56 @@ class Slug(arcade.Sprite):
         self.textures.append(texture)
 
         self.texture = self.textures[0]
+        self.center_x = x
+        self.center_y = y
+        self.scale = 0.6
 
         self.animation_frame = 0
         self.animation_timer = 0
 
         self.trail_emitter = make_trail(self, maintain=40)
 
-    def update(self, delta_time: float = 1 / 60, *args, **kwargs):
-        player_x, player_y = kwargs['player_coords']
+    def update(self, delta_time: float = 1 / 60, player_coords=None):
+        if player_coords is None:
+            player_x, player_y = 700, 700  # дефолтные координаты
+        else:
+            player_x, player_y = player_coords
+
         self.animation_timer += delta_time
         if self.animation_timer >= ANIMATION_SPEED:
             self.animation_timer = 0
             self.animation_frame = (self.animation_frame + 1) % len(self.textures)
-
         self.texture = self.textures[self.animation_frame]
 
-        if self.center_x < player_x:
-            self.change_x = 3
-        elif self.center_x == player_x:
-            self.change_x = 0
+        # Корректировка направления спрайта
+        if player_x > self.center_x:
+            self.scale_x = -0.6
         else:
-            self.change_x = -3
+            self.scale_x = 0.6
+
+        if self.center_x < player_x:
+            self.change_x = 1
+        elif self.center_x > player_x:
+            self.change_x = -1
+        else:
+            self.change_x = 0
 
         if self.center_y < player_y:
-            self.change_y = 3
-        elif self.center_y == player_y:
-            self.change_y = 0
+            self.change_y = 1
+        elif self.center_y > player_y:
+            self.change_y = -1
         else:
-            self.change_y = -3
-
-        super().update(delta_time)
-
-        self.trail_emitter.center_x = self.center_x
-        self.trail_emitter.center_y = self.center_y - 35
-
+            self.change_y = 0
+        self.center_x += self.change_x * delta_time * 60
+        self.center_y += self.change_y * delta_time * 60
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.slug_list = arcade.SpriteList()
         self.emitters = []
+        self.player_x = 700
+        self.player_y = 300
 
     def setup(self):
         slug1 = Slug(100, 100)
@@ -101,16 +108,17 @@ class MyGame(arcade.Window):
         self.slug_list.draw()
 
     def on_update(self, delta_time):
-        lst_coords = self.get_coords()
-        player_x, player_y = lst_coords[0], lst_coords[1]  # позиция «игрока» для определения направления
+        player_coords = (self.player_x, self.player_y)
 
         for slug in self.slug_list:
-            slug.update(delta_time, player_x)
+            slug.update(delta_time, player_coords)
 
+        # Обновляем позиции излучателей следов
         for slug in self.slug_list:
             slug.trail_emitter.center_x = slug.center_x
             slug.trail_emitter.center_y = slug.center_y - 35
 
+        # Обновляем излучатели
         emitters_copy = self.emitters.copy()
         for emitter in emitters_copy:
             emitter.update(delta_time)
@@ -118,29 +126,19 @@ class MyGame(arcade.Window):
                 self.emitters.remove(emitter)
 
     def on_key_press(self, key, modifiers):
-        # этот кусочек кода позволяет
-        # управлять одним из червяков
-        # и смотреть за его состоянием
-
-        if len(self.slug_list) > 0:
-            slug = self.slug_list[0]
-            if key == arcade.key.LEFT:
-                slug.center_x -= 5
-            elif key == arcade.key.RIGHT:
-                slug.center_x += 5
-            elif key == arcade.key.UP:
-                slug.center_y += 5
-            elif key == arcade.key.DOWN:
-                slug.center_y -= 5
-
-    def get_coords(self):
-        return [200, 200]
-        pass
-        # тут надо реализовать в основном коде получение координат игрока
+        # Управление игроком (не червяком!)
+        if key == arcade.key.LEFT:
+            self.player_x -= 40
+        elif key == arcade.key.RIGHT:
+            self.player_x += 40
+        elif key == arcade.key.UP:
+            self.player_y += 40
+        elif key == arcade.key.DOWN:
+            self.player_y -= 40
 
 
 def main():
-    game = MyGame(1000, 600, "Цветущие лилии")
+    game = MyGame(1000, 600, "тест червяка")
     game.setup()
     arcade.run()
 
