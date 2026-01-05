@@ -53,5 +53,9 @@ class V1(arcade.SpriteSolidColor):
         dy = y - self.center_y
         angle = math.atan2(dy, dx)
 
-        bullet = Bullet(self.center_x, self.center_y, BULLET_SPEED * math.cos(angle), BULLET_SPEED * math.sin(angle))
+        bullet = Bullet(self.center_x,
+                        self.center_y,
+                        BULLET_SPEED * math.cos(angle),
+                        BULLET_SPEED * math.sin(angle),
+                        -math.degrees(angle))
         self.bullet_list.append(bullet)
