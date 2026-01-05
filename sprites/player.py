@@ -4,7 +4,7 @@ from typing import List, Tuple
 import arcade
 from typing_extensions import Literal
 
-from constants import PLAYER_SPEED, SHOOTING_TIME, BULLET_SPEED
+from constants import PLAYER_SPEED, SHOOTING_TIME, BULLET_SPEED, CHARACTER_MAX_HP, INVULNERABILITY_TIME
 from sprites.bullet_sprite import Bullet
 
 
@@ -19,6 +19,8 @@ class V1(arcade.SpriteSolidColor):
         self.speed = speed
         self.bullet_list = bullet_list
         self.mouse_placement = mouse_placement
+        self.hp = CHARACTER_MAX_HP
+        self.invulnerability_timer = 0.0
 
         self.moving_left = False
         self.moving_right = False
@@ -32,6 +34,9 @@ class V1(arcade.SpriteSolidColor):
             self.shooting_timer -= SHOOTING_TIME
             self.shot()
 
+        if self.invulnerability_timer > 0:
+            self.invulnerability_timer = max(0.0, self.invulnerability_timer - delta_time)
+
         self.change_x = 0
         self.change_y = 0
 
@@ -44,10 +49,10 @@ class V1(arcade.SpriteSolidColor):
         if self.moving_down:
             self.change_y -= self.speed
 
-        super().update()
+        super().update(delta_time)
 
     def shot(self):
-        ... # логика выстрела
+        """логика выстрела"""
         x, y = self.mouse_placement[0]
         dx = x - self.center_x
         dy = y - self.center_y
@@ -59,3 +64,11 @@ class V1(arcade.SpriteSolidColor):
                         BULLET_SPEED * math.sin(angle),
                         -math.degrees(angle))
         self.bullet_list.append(bullet)
+
+    def apply_damage(self, damage: int):
+        if self.invulnerability_timer == 0:
+            self.hp -= damage
+            self.invulnerability_timer += INVULNERABILITY_TIME
+
+    def get_hp(self) -> int:
+        return self.hp

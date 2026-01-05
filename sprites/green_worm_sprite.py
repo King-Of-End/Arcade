@@ -28,9 +28,10 @@ def make_trail(attached_sprite, maintain=40):
     emit._attached = attached_sprite
     return emit
 
+
 class Slug(arcade.Sprite):
     def __init__(self, x, y):
-        super().__init__()
+        super().__init__(center_x=x, center_y=y, scale=0.6)
 
         # сюда можно запихнуть наши текстуры
         self.textures = []
@@ -40,9 +41,6 @@ class Slug(arcade.Sprite):
         self.textures.append(texture)
 
         self.texture = self.textures[0]
-        self.center_x = x
-        self.center_y = y
-        self.scale = 0.6
 
         self.animation_frame = 0
         self.animation_timer = 0
@@ -64,18 +62,19 @@ class Slug(arcade.Sprite):
             self.change_x = 0
         else:
             self.change_x = -3
-        
+
         if self.center_y < player_y:
             self.change_y = 3
         elif self.center_y == player_y:
             self.change_y = 0
         else:
             self.change_y = -3
-            
+
         super().update(delta_time)
-        
+
         self.trail_emitter.center_x = self.center_x
         self.trail_emitter.center_y = self.center_y - 35
+
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):

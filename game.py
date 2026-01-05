@@ -1,3 +1,4 @@
+import sys
 from typing import Tuple, List
 
 import arcade
@@ -48,10 +49,18 @@ class Game(arcade.Window):
         self.bullet_list.update(delta_time)
         self.enemies_list.update(delta_time, player_coords=self.get_player_coords())
 
+        contacting_player = arcade.check_for_collision_with_list(self.player, self.enemies_list)
+        for enemy in contacting_player:
+            self.player.apply_damage(12)
+
+        if self.player.get_hp() < 0:
+            self.end_game()
+
         for enemy in self.enemies_list:
             touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
             if touching_bulet:
                 enemy.remove_from_sprite_lists()
+
 
     def get_player_coords(self):
         return self.player.center_x, self.player.center_y
@@ -79,6 +88,11 @@ class Game(arcade.Window):
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> EVENT_HANDLE_STATE:
         self.mouse_placement.pop()
         self.mouse_placement.append((x, y))
+
+    def end_game(self):
+        """логика при проигрыше"""
+        ...
+        sys.exit()
 
 def main():
     game = Game(200)

@@ -30,7 +30,7 @@ def make_trail(attached_sprite, maintain=40):
 
 class Slug(arcade.Sprite):
     def __init__(self, x, y):
-        super().__init__()
+        super().__init__(center_x=x, center_y=y, scale=0.6)
 
         # сюда можно запихнуть наши текстуры
         self.textures = []
@@ -40,9 +40,6 @@ class Slug(arcade.Sprite):
         self.textures.append(texture)
 
         self.texture = self.textures[0]
-        self.center_x = x
-        self.center_y = y
-        self.scale = 0.6
 
         self.animation_frame = 0
         self.animation_timer = 0
