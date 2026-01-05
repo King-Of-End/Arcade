@@ -79,8 +79,8 @@ class MenuView(arcade.View):
     def on_update(self, delta_time):
         ...
 
-
-window = arcade.Window(1000, 800, "")
-menu_view = ScreenSaverView()
-window.show_view(menu_view)
-arcade.run()
+if __name__ == 'main':
+    window = arcade.Window(1000, 800, "")
+    menu_view = ScreenSaverView()
+    window.show_view(menu_view)
+    arcade.run()
