@@ -49,17 +49,33 @@ class Slug(arcade.Sprite):
 
         self.trail_emitter = make_trail(self, maintain=40)
 
-    def update(self, delta_time, player_x):
+    def update(self, delta_time: float = 1 / 60, *args, **kwargs):
+        player_x, player_y = kwargs['player_coords']
         self.animation_timer += delta_time
         if self.animation_timer >= ANIMATION_SPEED:
             self.animation_timer = 0
             self.animation_frame = (self.animation_frame + 1) % len(self.textures)
+
         self.texture = self.textures[self.animation_frame]
-        if player_x > self.center_x:
-            self.scale_x = -0.6
+
+        if self.center_x < player_x:
+            self.change_x = 3
+        elif self.center_x == player_x:
+            self.change_x = 0
         else:
-            self.scale_x = 0.6
-        # self.center_x = random.randint(50, 150) - этой строчкой можно посмотреть что след реально остается за ними
+            self.change_x = -3
+        
+        if self.center_y < player_y:
+            self.change_y = 3
+        elif self.center_y == player_y:
+            self.change_y = 0
+        else:
+            self.change_y = -3
+            
+        super().update(delta_time)
+        
+        self.trail_emitter.center_x = self.center_x
+        self.trail_emitter.center_y = self.center_y - 35
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):

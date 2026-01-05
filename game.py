@@ -4,13 +4,13 @@ import arcade
 from arcade import SpriteList
 from pyglet.event import EVENT_HANDLE_STATE
 
-from sprites.player import V1
+from sprites import V1, Slug, Worm
 from constants import PLAYER_SPEED
 
 
 class Game(arcade.Window):
     def __init__(self, speed):
-        super().__init__(800, 600, 'free Ultrakill clone')
+        super().__init__(1000, 1000, 'free Ultrakill clone')
         self.bullet_list: SpriteList = arcade.SpriteList()
         self.mouse_placement: List[Tuple[int, int]] = [(0, 0)]
 
@@ -24,15 +24,37 @@ class Game(arcade.Window):
         self.player_list: arcade.SpriteList = arcade.SpriteList()
         self.player_list.append(self.player)
 
+        self.enemies_list: arcade.SpriteList = arcade.SpriteList()
+
+        self.setup()
+
+    def setup(self) -> None:
+        self.add_enemies()
+
+    def add_enemies(self):
+        self.enemies_list.append(Slug(500, 500))
+        self.enemies_list.append(Worm(300, 300))
+        ... # Добавдение врагов в self.enemies_list
 
     def on_draw(self):
         self.clear()
         self.player_list.draw()
         self.bullet_list.draw()
+        self.enemies_list.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
         self.player_list.update(delta_time)
         self.bullet_list.update(delta_time)
+        self.enemies_list.update(delta_time, player_coords=self.get_player_coords())
+
+        # emitters_copy = self.emitters.copy()
+        # for emitter in emitters_copy:
+        #     emitter.update(delta_time)
+        #     if emitter.can_reap():
+        #         self.emitters.remove(emitter)
+
+    def get_player_coords(self):
+        return self.player.center_x, self.player.center_y
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.D:
