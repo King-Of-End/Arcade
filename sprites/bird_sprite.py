@@ -83,6 +83,8 @@ class Bird(arcade.Sprite):
         elif self.change_y < 0:
             self.center_x += self.change_x * delta_time * 60
             self.center_y += -2 * delta_time * 60
+        self.trail_emitter.center_x = self.center_x
+        self.trail_emitter.center_y = self.center_y - 35
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
