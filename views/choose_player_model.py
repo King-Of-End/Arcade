@@ -155,10 +155,3 @@ class ModelChoose(arcade.View):
     def on_hide_view(self) -> None:
         self.active = False
         self.manager.disable()
-
-
-if __name__ == '__main__':
-    window = arcade.Window(1000, 800, "Выбор уровня")
-    menu_view = ModelChoose()
-    window.show_view(menu_view)
-    arcade.run()
