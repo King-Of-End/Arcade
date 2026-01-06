@@ -120,9 +120,11 @@ class Game(arcade.View):
             touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
             if touching_bulet:
                 enemy.remove_from_sprite_lists()
+                self.emitters.remove(enemy.trail_emitter)
                 self.kills += 1
 
         self.world_camera.position = self.get_player_coords()
+
         emitters_copy = self.emitters.copy()
         for emitter in emitters_copy:
             emitter.update(delta_time)
