@@ -40,7 +40,7 @@ class ModelChoose(arcade.View):
 
         # Кнопка «Легко»
         level1_button = UIFlatButton(
-            text="Легко",
+            text="Выбрать",
             width=button_width,
             height=button_height
         )
@@ -55,7 +55,7 @@ class ModelChoose(arcade.View):
 
         # Кнопка «Нормально»
         level2_button = UIFlatButton(
-            text="Нормально",
+            text="Выбрать",
             width=button_width,
             height=button_height
         )
@@ -70,7 +70,7 @@ class ModelChoose(arcade.View):
 
         # Кнопка «Сложно»
         level3_button = UIFlatButton(
-            text="Сложно",
+            text="Выбрать",
             width=button_width,
             height=button_height
         )
