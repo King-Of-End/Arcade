@@ -88,12 +88,15 @@ class ModelChoose(arcade.View):
             self.window.show_view(self.menu)
 
     def model0(self, event):
+        print(0)
         self.config(0)
 
     def model1(self, event):
+        print(1)
         self.config(1)
 
     def model2(self, event):
+        print(2)
         self.config(2)
 
     def config(self, level):
@@ -144,9 +147,11 @@ class ModelChoose(arcade.View):
 
     def on_show_view(self) -> None:
         self.active = True
+        self.manager.enable()
 
     def on_hide_view(self) -> None:
         self.active = False
+        self.manager.disable()
 
 
 if __name__ == '__main__':

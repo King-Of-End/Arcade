@@ -59,9 +59,11 @@ class MenuView(arcade.View):
 
     def on_show_view(self) -> None:
         self.active = True
+        self.manager.enable()
 
     def on_hide_view(self) -> None:
         self.active = False
+        self.manager.disable()
 
     def on_draw(self):
         self.clear()
