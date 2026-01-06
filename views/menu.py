@@ -47,7 +47,7 @@ class MenuView(arcade.View):
 
     def start_game(self, *args):
         game = Game()
-        arcade.run()
+        self.window.show_view(game)
 
     def choose_level(self, *args):
         self.window.show_view(self.difficulty_view)

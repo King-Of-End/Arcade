@@ -9,9 +9,9 @@ from sprites import V1, Slug, Worm
 from constants import PLAYER_SPEED
 
 
-class Game(arcade.Window):
+class Game(arcade.View):
     def __init__(self):
-        super().__init__(1000, 1000, 'free Binding of Isaac clone')
+        super().__init__()
         self.bullet_list: SpriteList = arcade.SpriteList()
         self.mouse_placement: List[Tuple[int, int]] = [(0, 0)]
 
