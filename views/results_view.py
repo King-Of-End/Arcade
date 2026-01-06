@@ -26,10 +26,10 @@ class ResultsView(arcade.View):
         self.batch = Batch()
         self.monsters_killed_text = arcade.Text(f"Монстров убито: {monsters_killed}", self.window.width / 2,
                                      self.window.height / 2 + 200,
-                                     arcade.color.WHITE, font_size=40, anchor_x="center", batch=self.batch)
+                                     arcade.color.BLACK, font_size=40, anchor_x="center", batch=self.batch)
         self.time_elapsed_text = arcade.Text(f"Времени прошло: {time_elapsed:.1f} секунд", self.window.width / 2,
                                      self.window.height / 2 + 100,
-                                     arcade.color.WHITE, font_size=40, anchor_x="center", batch=self.batch)
+                                     arcade.color.BLACK, font_size=40, anchor_x="center", batch=self.batch)
 
         self.background = arcade.load_texture("images/background.jpg")
 

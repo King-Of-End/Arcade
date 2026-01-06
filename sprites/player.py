@@ -79,7 +79,6 @@ class V1(arcade.Sprite):
             self.animation_frame += 1
             self.texture = self.texture_list[1]
 
-        super().update(delta_time)
 
     def shot(self):
         """логика выстрела"""

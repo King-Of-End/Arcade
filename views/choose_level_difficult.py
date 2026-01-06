@@ -3,7 +3,7 @@ import json
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UIFlatButton
 
-level_config = 1
+level_config = json.load(open('config.json'))['difficulty']
 
 
 class LevelChoose(arcade.View):

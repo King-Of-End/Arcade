@@ -3,7 +3,7 @@ import json
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIFlatButton
 
-player_model_number = 0 # это номер модельки игрока, пригодится при анимации игрока по формуле
+player_model_number = json.load(open('config.json'))['player_model'] # это номер модельки игрока, пригодится при анимации игрока по формуле
                         # f"player_{i}_1.png" и другие
 
 class ModelChoose(arcade.View):

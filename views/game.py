@@ -8,7 +8,7 @@ import arcade
 from arcade import SpriteList, Camera2D
 from pyglet.event import EVENT_HANDLE_STATE
 
-from sprites import V1, Slug, Worm
+from sprites import V1, Slug, Worm, BrickWall, Bird
 from constants import PLAYER_SPEED
 from views.results_view import ResultsView
 
@@ -38,7 +38,15 @@ class Game(arcade.View):
 
         self.enemies_list: arcade.SpriteList = arcade.SpriteList()
 
+        self.walls_list: SpriteList = arcade.SpriteList()
         self.setup()
+        self.engine = arcade.PhysicsEngineSimple(
+            self.player,
+            self.walls_list
+        )
+
+        self.enemy_types = [Bird, Slug, Worm]
+
         self.world_camera = Camera2D()
 
     def get_config(self):
@@ -47,12 +55,10 @@ class Game(arcade.View):
         return config['difficulty'], config['player_model']
 
     def setup(self) -> None:
-        self.add_enemies()
-
-    def add_enemies(self):
-        self.enemies_list.append(Slug(500, 500))
-        self.enemies_list.append(Worm(300, 300))
-        ...  # Добавдение врагов в self.enemies_list
+        for _ in range(random.randint(1000, 2000)):
+            x, y = random.randint(-9000, 9000), random.randint(-9000, 9000)
+            wall = BrickWall(x, y)
+            self.walls_list.append(wall)
 
     def on_draw(self):
         self.clear()
@@ -60,6 +66,7 @@ class Game(arcade.View):
         self.player_list.draw()
         self.bullet_list.draw()
         self.enemies_list.draw()
+        self.walls_list.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
         """Обновляем все спрайты, врагам передаём позицию игрока"""
@@ -68,6 +75,12 @@ class Game(arcade.View):
         self.player_list.update(delta_time)
         self.bullet_list.update(delta_time)
         self.enemies_list.update(delta_time, self.get_player_coords())
+        self.engine.update()
+
+        if abs(self.player.center_x) > 10000:
+            self.player.center_x *= -1
+        if abs(self.player.center_y) > 10000:
+            self.player.center_x *= -1
 
         contacting_player = arcade.check_for_collision_with_list(self.player, self.enemies_list)
         for enemy in contacting_player:
@@ -81,8 +94,14 @@ class Game(arcade.View):
             if touching_bulet:
                 enemy.remove_from_sprite_lists()
                 self.kills += 1
-        #
-        # self.world_camera.position = self.get_player_coords()
+
+        self.world_camera.position = self.get_player_coords()
+
+        if len(self.enemies_list) < 5:
+            enemy_coords = self.get_random_points_on_circle(self.get_player_coords()[0], self.get_player_coords()[1], 1000)
+            for i in enemy_coords:
+                enemy = random.choice(self.enemy_types)(*i)
+                self.enemies_list.append(enemy)
 
     def get_player_coords(self):
         return self.player.center_x, self.player.center_y
@@ -108,14 +127,16 @@ class Game(arcade.View):
             self.player.moving_down = False
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> EVENT_HANDLE_STATE:
-        self.mouse_placement.pop()
-        self.mouse_placement.append((x, y))
+        world_x, world_y = self.world_camera.unproject((x, y))[:2]
+        self.mouse_placement[0] = (world_x, world_y)
 
     def end_game(self):
         """логика при проигрыше"""
+        self.world_camera.position = -100000, -1000
+        self.player.position = 500, 400
         self.window.show_view(ResultsView(self.menu_view, self.kills, self.timer))
 
-    def get_random_points_on_circle(center_x: float, center_y: float, radius: float) -> list[tuple[float, float]]:
+    def get_random_points_on_circle(self, center_x: float, center_y: float, radius: float) -> list[tuple[float, float]]:
         points = []
         used_angles = set()
 

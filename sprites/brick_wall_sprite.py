@@ -4,9 +4,17 @@ ANIMATION_SPEED = 0.3
 
 
 class BrickWall(arcade.Sprite):
+    # Загружаем текстуру один раз на уровне класса
+    _texture = None
+
     def __init__(self, x, y):
         super().__init__()
-        self.texture = arcade.load_texture("images/brick_wall.png")
+
+        # Ленивая загрузка текстуры (первый раз загружаем, потом переиспользуем)
+        if BrickWall._texture is None:
+            BrickWall._texture = arcade.load_texture("images/brick_wall.png")
+
+        self.texture = BrickWall._texture
         self.center_x = x
         self.center_y = y
         self.scale = 0.07
