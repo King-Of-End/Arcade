@@ -88,22 +88,13 @@ class ModelChoose(arcade.View):
             self.window.show_view(self.menu)
 
     def model0(self, event):
-        print(0)
         self.config(0)
-        global player_model_number
-        player_model_number = 0
 
     def model1(self, event):
-        print(1)
         self.config(1)
-        global player_model_number
-        player_model_number = 1
 
     def model2(self, event):
-        print(2)
         self.config(2)
-        global player_model_number
-        player_model_number = 2
 
     def config(self, level):
         if self.active:
