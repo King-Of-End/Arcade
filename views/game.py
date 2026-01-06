@@ -2,7 +2,7 @@ import sys
 from typing import Tuple, List
 
 import arcade
-from arcade import SpriteList
+from arcade import SpriteList, Camera2D
 from pyglet.event import EVENT_HANDLE_STATE
 
 from sprites import V1, Slug, Worm
@@ -10,8 +10,8 @@ from constants import PLAYER_SPEED
 
 
 class Game(arcade.Window):
-    def __init__(self, speed):
-        super().__init__(1000, 1000, 'free Ultrakill clone')
+    def __init__(self):
+        super().__init__(1000, 1000, 'free Binding of Isaac clone')
         self.bullet_list: SpriteList = arcade.SpriteList()
         self.mouse_placement: List[Tuple[int, int]] = [(0, 0)]
 
@@ -29,9 +29,11 @@ class Game(arcade.Window):
         self.enemies_list: arcade.SpriteList = arcade.SpriteList()
 
         self.setup()
+        self.world_camera = Camera2D()
 
     def setup(self) -> None:
         self.add_enemies()
+
 
     def add_enemies(self):
         self.enemies_list.append(Slug(500, 500))
@@ -40,6 +42,7 @@ class Game(arcade.Window):
 
     def on_draw(self):
         self.clear()
+        self.world_camera.use()
         self.player_list.draw()
         self.bullet_list.draw()
         self.enemies_list.draw()
@@ -61,6 +64,8 @@ class Game(arcade.Window):
             touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
             if touching_bulet:
                 enemy.remove_from_sprite_lists()
+        #
+        # self.world_camera.position = self.get_player_coords()
 
 
     def get_player_coords(self):
@@ -96,7 +101,7 @@ class Game(arcade.Window):
         sys.exit()
 
 def main():
-    game = Game(200)
+    game = Game()
     arcade.run()
 
 if __name__ == "__main__":

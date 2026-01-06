@@ -4,10 +4,12 @@ from arcade.gui import UIManager, UIAnchorLayout, UIFlatButton
 player_model_number = 0 # это номер модельки игрока, пригодится при анимации игрока по формуле
                         # f"player_{i}_1.png" и другие
 
-class LevelChoose(arcade.View):
-    def __init__(self):
+class ModelChoose(arcade.View):
+    def __init__(self, menu):
         super().__init__()
         arcade.set_background_color(arcade.color.GRAY)
+        self.menu = menu
+
         self.manager = UIManager()
         self.manager.enable()
         self.anchor_layout = UIAnchorLayout()
@@ -80,7 +82,7 @@ class LevelChoose(arcade.View):
         )
 
     def to_menu(self, event):
-        print("Переход в меню")
+        self.window.show_view(self.menu)
 
     def model0(self, event):
         global player_model_number
@@ -140,6 +142,6 @@ class LevelChoose(arcade.View):
 
 if __name__ == '__main__':
     window = arcade.Window(1000, 800, "Выбор уровня")
-    menu_view = LevelChoose()
+    menu_view = ModelChoose()
     window.show_view(menu_view)
     arcade.run()

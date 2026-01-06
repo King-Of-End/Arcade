@@ -1,11 +1,19 @@
 import arcade
-from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UIFlatButton
+from arcade.gui import UIFlatButton, UIBoxLayout, UIAnchorLayout, UIManager
+
+from .choose_level_difficult import LevelChoose
+from .choose_player_model import ModelChoose
+from .game import Game
 
 
-class LevelChoose(arcade.View):
+class MenuView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.GRAY)
+
+        self.player_model_view = ModelChoose(self)
+        self.difficulty_view = LevelChoose(self)
+
         self.manager = UIManager()
         self.manager.enable()  # Включить, чтоб виджеты работали
 
@@ -22,34 +30,27 @@ class LevelChoose(arcade.View):
         self.background = arcade.load_texture("images/background.jpg")
 
     def setup_widgets(self):
-        to_menu_button = UIFlatButton(text="В меню", width=400, height=80, color=arcade.color.BLUE)
-        to_menu_button.on_click = self.to_menu
-        self.box_layout.add(to_menu_button)
+        change_person_button = UIFlatButton(text="Выбрать персонажа", width=400, height=80, color=arcade.color.BLUE)
+        change_person_button.on_click = self.choose_player_model
+        self.box_layout.add(change_person_button)
 
-        level1_button = UIFlatButton(text="Легко", width=400, height=80, color=arcade.color.BLUE)
-        level1_button.on_click = self.level1
-        self.box_layout.add(level1_button)
+        choose_level_button = UIFlatButton(text="Выбрать уровень", width=400, height=80, color=arcade.color.BLUE)
+        choose_level_button.on_click = self.choose_level
+        self.box_layout.add(choose_level_button)
 
-        level2_button = UIFlatButton(text="Нормально", width=400, height=80, color=arcade.color.BLUE)
-        level2_button.on_click = self.level2
-        self.box_layout.add(level2_button)
+        start_game_buuton = UIFlatButton(text='Начать игру', width=400, height=80, color=arcade.color.BLUE)
+        start_game_buuton.on_click = self.start_game
+        self.box_layout.add(start_game_buuton)
 
-        level3_button = UIFlatButton(text="Сложно", width=400, height=80, color=arcade.color.BLUE)
-        level3_button.on_click = self.level3
-        self.box_layout.add(level3_button)
+    def choose_player_model(self, *args):
+        self.window.show_view(self.player_model_view)
 
-    def to_menu(self, *args):
-        print(args)
-        pass
+    def start_game(self, *args):
+        game = Game()
+        arcade.run()
 
-    def level1(self, *args):
-        pass
-
-    def level2(self, *args):
-        pass
-
-    def level3(self, *args):
-        pass
+    def choose_level(self, *args):
+        self.window.show_view(self.difficulty_view)
 
     def on_draw(self):
         self.clear()
@@ -59,13 +60,3 @@ class LevelChoose(arcade.View):
                                  color=arcade.color.WHITE, angle=0.0, blend=True,
                                  alpha=255, pixelated=False, atlas=None)
         self.manager.draw()
-        # Рисуем спрайты, сцену...
-
-    def on_update(self, delta_time):
-        ...
-
-if __name__ == '__main__':
-    window = arcade.Window(1000, 800, "")
-    menu_view = LevelChoose()
-    window.show_view(menu_view)
-    arcade.run()
