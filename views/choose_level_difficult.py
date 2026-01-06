@@ -3,6 +3,8 @@ import json
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UIFlatButton
 
+level_config = 1
+
 
 class LevelChoose(arcade.View):
     def __init__(self, menu):
@@ -47,12 +49,18 @@ class LevelChoose(arcade.View):
 
     def level1(self, *args):
         self.config(1)
+        global level_config
+        level_config = 1
 
     def level2(self, *args):
         self.config(2)
+        global level_config
+        level_config = 2
 
     def level3(self, *args):
         self.config(3)
+        global level_config
+        level_config = 3
 
     def config(self, level):
         if self.active:
@@ -67,6 +75,19 @@ class LevelChoose(arcade.View):
                                                               right=self.width, top=self.height),
                                  color=arcade.color.WHITE, angle=0.0, blend=True,
                                  alpha=255, pixelated=False, atlas=None)
+        global level_config
+        if level_config == 1:
+            arcade.draw_rect_filled(arcade.Rect(x=800, y=450,
+                                             width=60, height=60, bottom=0, left=0,
+                                             right=self.width, top=self.height), arcade.color.GREEN,)
+        if level_config == 2:
+            arcade.draw_rect_filled(arcade.Rect(x=800, y=360,
+                                             width=60, height=60, bottom=0, left=0,
+                                             right=self.width, top=self.height), arcade.color.GREEN,)
+        if level_config == 3:
+            arcade.draw_rect_filled(arcade.Rect(x=800, y=260,
+                                             width=60, height=60, bottom=0, left=0,
+                                             right=self.width, top=self.height), arcade.color.GREEN,)
         self.manager.draw()
         # Рисуем спрайты, сцену...
 
