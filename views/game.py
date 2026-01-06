@@ -1,4 +1,6 @@
 import json
+import math
+import random
 import sys
 from typing import Tuple, List
 
@@ -29,7 +31,7 @@ class Game(arcade.View):
             PLAYER_SPEED,
             self.bullet_list,
             self.mouse_placement,
-            player_model=player_model # это значение мы получим из окна выбора персонажа
+            player_model=player_model  # это значение мы получим из окна выбора персонажа
         )
         self.player_list: arcade.SpriteList = arcade.SpriteList()
         self.player_list.append(self.player)
@@ -47,11 +49,10 @@ class Game(arcade.View):
     def setup(self) -> None:
         self.add_enemies()
 
-
     def add_enemies(self):
         self.enemies_list.append(Slug(500, 500))
         self.enemies_list.append(Worm(300, 300))
-        ... # Добавдение врагов в self.enemies_list
+        ...  # Добавдение врагов в self.enemies_list
 
     def on_draw(self):
         self.clear()
@@ -83,7 +84,6 @@ class Game(arcade.View):
         #
         # self.world_camera.position = self.get_player_coords()
 
-
     def get_player_coords(self):
         return self.player.center_x, self.player.center_y
 
@@ -114,3 +114,29 @@ class Game(arcade.View):
     def end_game(self):
         """логика при проигрыше"""
         self.window.show_view(ResultsView(self.menu_view, self.kills, self.timer))
+
+    def get_random_points_on_circle(center_x: float, center_y: float, radius: float) -> list[tuple[float, float]]:
+        points = []
+        used_angles = set()
+
+        with open('config.json', 'r') as file:
+            data = json.load(file)
+
+        counter = data['difficulty']
+
+        while len(points) < int(counter) * 2:
+            angle = random.uniform(0, 2 * math.pi)
+
+            angle_deg = round(math.degrees(angle))
+
+            if angle_deg in used_angles:
+                continue
+
+            used_angles.add(angle_deg)
+
+            x = center_x + radius * math.cos(angle)
+            y = center_y + radius * math.sin(angle)
+
+            points.append((x, y))
+
+        return points
