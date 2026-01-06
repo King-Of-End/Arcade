@@ -7,11 +7,16 @@ from pyglet.event import EVENT_HANDLE_STATE
 
 from sprites import V1, Slug, Worm
 from constants import PLAYER_SPEED
+from views.results_view import ResultsView
 
 
 class Game(arcade.View):
-    def __init__(self):
+    def __init__(self, menu_view: arcade.View):
         super().__init__()
+        self.menu_view = menu_view
+        self.kills = 0
+        self.timer = 0
+
         self.bullet_list: SpriteList = arcade.SpriteList()
         self.mouse_placement: List[Tuple[int, int]] = [(0, 0)]
 
@@ -48,7 +53,9 @@ class Game(arcade.View):
         self.enemies_list.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
-        """Обновлеям все спрайты, врагам передаём позицию игрока"""
+        """Обновляем все спрайты, врагам передаём позицию игрока"""
+        self.timer += delta_time
+
         self.player_list.update(delta_time)
         self.bullet_list.update(delta_time)
         self.enemies_list.update(delta_time, self.get_player_coords())
@@ -64,12 +71,13 @@ class Game(arcade.View):
             touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
             if touching_bulet:
                 enemy.remove_from_sprite_lists()
+                self.kills += 1
         #
         # self.world_camera.position = self.get_player_coords()
 
 
     def get_player_coords(self):
-        return (self.player.center_x, self.player.center_y)
+        return self.player.center_x, self.player.center_y
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.D:
@@ -97,12 +105,4 @@ class Game(arcade.View):
 
     def end_game(self):
         """логика при проигрыше"""
-        ...
-        sys.exit()
-
-def main():
-    game = Game()
-    arcade.run()
-
-if __name__ == "__main__":
-    main()
+        self.window.show_view(ResultsView(self.menu_view, self.kills, self.timer))

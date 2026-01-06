@@ -1,18 +1,14 @@
 import arcade
 from arcade.gui import UIFlatButton, UIBoxLayout, UIAnchorLayout, UIManager
-
-from .choose_level_difficult import LevelChoose
-from .choose_player_model import ModelChoose
-from .game import Game
+from pyglet.graphics import Batch
 
 
-class MenuView(arcade.View):
-    def __init__(self):
+class ResultsView(arcade.View):
+    def __init__(self, menu, monsters_killed, time_elapsed):
         super().__init__()
         arcade.set_background_color(arcade.color.GRAY)
 
-        self.player_model_view = ModelChoose(self)
-        self.difficulty_view = LevelChoose(self)
+        self.menu_view = menu
 
         self.manager = UIManager()
         self.manager.enable()  # Включить, чтоб виджеты работали
@@ -27,30 +23,23 @@ class MenuView(arcade.View):
         self.anchor_layout.add(self.box_layout)  # Box в anchor
         self.manager.add(self.anchor_layout)
 
+        self.batch = Batch()
+        self.monsters_killed_text = arcade.Text(f"Монстров убито: {monsters_killed}", self.window.width / 2,
+                                     self.window.height / 2 + 200,
+                                     arcade.color.WHITE, font_size=40, anchor_x="center", batch=self.batch)
+        self.time_elapsed_text = arcade.Text(f"Времени прошло: {time_elapsed:.1f} секунд", self.window.width / 2,
+                                     self.window.height / 2 + 100,
+                                     arcade.color.WHITE, font_size=40, anchor_x="center", batch=self.batch)
+
         self.background = arcade.load_texture("images/background.jpg")
 
     def setup_widgets(self):
-        change_person_button = UIFlatButton(text="Выбрать персонажа", width=400, height=80, color=arcade.color.BLUE)
-        change_person_button.on_click = self.choose_player_model
+        change_person_button = UIFlatButton(text="В меню", width=400, height=80, color=arcade.color.BLUE)
+        change_person_button.on_click = self.menu
         self.box_layout.add(change_person_button)
 
-        choose_level_button = UIFlatButton(text="Выбрать уровень", width=400, height=80, color=arcade.color.BLUE)
-        choose_level_button.on_click = self.choose_level
-        self.box_layout.add(choose_level_button)
-
-        start_game_buuton = UIFlatButton(text='Начать игру', width=400, height=80, color=arcade.color.BLUE)
-        start_game_buuton.on_click = self.start_game
-        self.box_layout.add(start_game_buuton)
-
-    def choose_player_model(self, *args):
-        self.window.show_view(self.player_model_view)
-
-    def start_game(self, *args):
-        game = Game(self)
-        self.window.show_view(game)
-
-    def choose_level(self, *args):
-        self.window.show_view(self.difficulty_view)
+    def menu(self, *args):
+        self.window.show_view(self.menu_view)
 
     def on_draw(self):
         self.clear()
@@ -60,3 +49,4 @@ class MenuView(arcade.View):
                                  color=arcade.color.WHITE, angle=0.0, blend=True,
                                  alpha=255, pixelated=False, atlas=None)
         self.manager.draw()
+        self.batch.draw()
