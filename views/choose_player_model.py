@@ -1,3 +1,5 @@
+import json
+
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIFlatButton
 
@@ -82,19 +84,23 @@ class ModelChoose(arcade.View):
         )
 
     def to_menu(self, event):
-        self.window.show_view(self.menu)
+        if self.active:
+            self.window.show_view(self.menu)
 
     def model0(self, event):
-        global player_model_number
-        player_model_number = 0
+        self.config(0)
 
     def model1(self, event):
-        global player_model_number
-        player_model_number = 1
+        self.config(1)
 
     def model2(self, event):
-        global player_model_number
-        player_model_number = 2
+        self.config(2)
+
+    def config(self, level):
+        if self.active:
+            config = json.loads(open("config.json").read())
+            config['player_model'] = level
+            json.dump(config, open("config.json", "w"))
 
     def on_draw(self):
         self.clear()
@@ -136,8 +142,11 @@ class ModelChoose(arcade.View):
                                              right=self.width, top=self.height), arcade.color.GREEN,)
         self.manager.draw()
 
-    def on_update(self, delta_time):
-        pass
+    def on_show_view(self) -> None:
+        self.active = True
+
+    def on_hide_view(self) -> None:
+        self.active = False
 
 
 if __name__ == '__main__':

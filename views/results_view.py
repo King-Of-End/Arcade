@@ -50,3 +50,9 @@ class ResultsView(arcade.View):
                                  alpha=255, pixelated=False, atlas=None)
         self.manager.draw()
         self.batch.draw()
+
+    def on_show_view(self) -> None:
+        self.active = True
+
+    def on_hide_view(self) -> None:
+        self.active = False

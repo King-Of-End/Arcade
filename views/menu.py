@@ -29,6 +29,8 @@ class MenuView(arcade.View):
 
         self.background = arcade.load_texture("images/background.jpg")
 
+        self.active = True
+
     def setup_widgets(self):
         change_person_button = UIFlatButton(text="Выбрать персонажа", width=400, height=80, color=arcade.color.BLUE)
         change_person_button.on_click = self.choose_player_model
@@ -43,14 +45,23 @@ class MenuView(arcade.View):
         self.box_layout.add(start_game_buuton)
 
     def choose_player_model(self, *args):
-        self.window.show_view(self.player_model_view)
+        if self.active:
+            self.window.show_view(self.player_model_view)
 
     def start_game(self, *args):
-        game = Game(self)
-        self.window.show_view(game)
+        if self.active:
+            game = Game(self)
+            self.window.show_view(game)
 
     def choose_level(self, *args):
-        self.window.show_view(self.difficulty_view)
+        if self.active:
+            self.window.show_view(self.difficulty_view)
+
+    def on_show_view(self) -> None:
+        self.active = True
+
+    def on_hide_view(self) -> None:
+        self.active = False
 
     def on_draw(self):
         self.clear()

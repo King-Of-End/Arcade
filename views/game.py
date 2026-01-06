@@ -1,3 +1,4 @@
+import json
 import sys
 from typing import Tuple, List
 
@@ -20,13 +21,15 @@ class Game(arcade.View):
         self.bullet_list: SpriteList = arcade.SpriteList()
         self.mouse_placement: List[Tuple[int, int]] = [(0, 0)]
 
+        self.difficulty, player_model = self.get_config()
+
         self.player: V1 = V1(
             self.center_x,
             self.center_y,
             PLAYER_SPEED,
             self.bullet_list,
             self.mouse_placement,
-            player_model=0 # это значение мы получим из окна выбора персонажа
+            player_model=player_model # это значение мы получим из окна выбора персонажа
         )
         self.player_list: arcade.SpriteList = arcade.SpriteList()
         self.player_list.append(self.player)
@@ -35,6 +38,11 @@ class Game(arcade.View):
 
         self.setup()
         self.world_camera = Camera2D()
+
+    def get_config(self):
+        with open('config.json') as file:
+            config = json.load(file)
+        return config['difficulty'], config['player_model']
 
     def setup(self) -> None:
         self.add_enemies()

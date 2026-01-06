@@ -1,3 +1,5 @@
+import json
+
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UIFlatButton
 
@@ -40,16 +42,23 @@ class LevelChoose(arcade.View):
         self.box_layout.add(level3_button)
 
     def to_menu(self, *args):
-        self.window.show_view(self.menu)
+        if self.active:
+            self.window.show_view(self.menu)
 
     def level1(self, *args):
-        pass
+        self.config(1)
 
     def level2(self, *args):
-        pass
+        self.config(2)
 
     def level3(self, *args):
-        pass
+        self.config(3)
+
+    def config(self, level):
+        if self.active:
+            config = json.loads(open("config.json").read())
+            config['difficulty'] = level
+            json.dump(config, open("config.json", "w"))
 
     def on_draw(self):
         self.clear()
@@ -61,8 +70,11 @@ class LevelChoose(arcade.View):
         self.manager.draw()
         # Рисуем спрайты, сцену...
 
-    def on_update(self, delta_time):
-        ...
+    def on_show_view(self) -> None:
+        self.active = True
+
+    def on_hide_view(self) -> None:
+        self.active = False
 
 if __name__ == '__main__':
     window = arcade.Window(1000, 800, "")
