@@ -72,7 +72,12 @@ class Game(arcade.View):
         self.enemy_types = [Bird, Slug, Worm]
 
         self.world_camera = Camera2D()
+
         self.emitters = []
+
+        self.explosion_sound = arcade.load_sound(":resources:sounds/hit5.wav")
+
+        arcade.set_background_color(arcade.color.SAND)
 
     def get_config(self):
         with open('config.json') as file:
@@ -119,6 +124,7 @@ class Game(arcade.View):
         for enemy in self.enemies_list:
             touching_bulet = arcade.check_for_collision_with_list(enemy, self.bullet_list)
             if touching_bulet:
+                arcade.play_sound(self.explosion_sound)
                 enemy.remove_from_sprite_lists()
                 self.emitters.remove(enemy.trail_emitter)
                 self.kills += 1
