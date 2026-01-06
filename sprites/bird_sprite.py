@@ -27,7 +27,7 @@ def make_trail(attached_sprite, maintain=40):
     emit._attached = attached_sprite
     return emit
 
-class Slug(arcade.Sprite):
+class Bird(arcade.Sprite):
     def __init__(self, x, y):
         super().__init__()
 
@@ -93,10 +93,10 @@ class MyGame(arcade.Window):
         self.player_y = 500
 
     def setup(self):
-        slug1 = Slug(100, 100)
+        slug1 = Bird(100, 100)
         self.slug_list.append(slug1)
 
-        slug2 = Slug(300, 200)
+        slug2 = Bird(300, 200)
         self.slug_list.append(slug2)
 
         self.emitters.append(slug1.trail_emitter)
