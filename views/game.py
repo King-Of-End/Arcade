@@ -2,13 +2,13 @@ import json
 import math
 import random
 import sys
-import time
 from typing import Tuple, List
 
 import arcade
 from arcade import SpriteList, Camera2D
 from arcade.particles import Emitter, EmitMaintainCount, FadeParticle
 from pyglet.event import EVENT_HANDLE_STATE
+from pyglet.graphics import Batch
 
 from sprites import V1, Slug, Worm, BrickWall, Bird
 from constants import PLAYER_SPEED
@@ -80,6 +80,8 @@ class Game(arcade.View):
 
         arcade.set_background_color(arcade.color.SAND)
 
+        self.batch = Batch()
+
     def get_config(self):
         with open('config.json') as file:
             config = json.load(file)
@@ -98,6 +100,7 @@ class Game(arcade.View):
         self.bullet_list.draw()
         self.enemies_list.draw()
         self.walls_list.draw()
+        self.batch.draw()
         for emitter in self.emitters:
             emitter.draw()
 
@@ -144,6 +147,10 @@ class Game(arcade.View):
                 enemy = random.choice(self.enemy_types)(*i)
                 self.enemies_list.append(enemy)
                 self.emitters.append(enemy.trail_emitter)
+
+        self.main_text = arcade.Text(f"hp: {self.player.get_hp()} kills: {self.kills}", 0 + self.get_player_coords()[0],
+                                     300 + self.get_player_coords()[1],
+                                     arcade.color.WHITE, font_size=40, anchor_x="center", batch=self.batch)
 
     def get_player_coords(self):
         return self.player.center_x, self.player.center_y
