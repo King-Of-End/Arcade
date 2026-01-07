@@ -141,7 +141,12 @@ class Game(arcade.View):
             if emitter.can_reap():
                 self.emitters.remove(emitter)
 
-        if len(self.enemies_list) < 5:
+        with open('config.json', 'r') as file:
+            data = json.load(file)
+
+        counter = data['difficulty']
+
+        if len(self.enemies_list) < 10 * counter:
             enemy_coords = self.get_random_points_on_circle(self.get_player_coords()[0], self.get_player_coords()[1], 1000)
             for i in enemy_coords:
                 enemy = random.choice(self.enemy_types)(*i)
